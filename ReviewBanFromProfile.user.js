@@ -1,24 +1,23 @@
 // ==UserScript==
 // @name         Review Ban from profile
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  Add useful links to ban and unban from review directly from the user's profile.
 // @author       Madara Uchiha
-// @match          *://stackoverflow.com/*
-// @match          *://serverfault.com/*
-// @match          *://superuser.com/*
-// @match          *://meta.stackoverflow.com/*
-// @match          *://meta.serverfault.com/*
-// @match          *://meta.superuser.com/*
-// @match          *://stackapps.com/*
-// @match          *://*.stackexchange.com/*
-// @match          *://askubuntu.com/*
-// @match          *://meta.askubuntu.com/*
-// @match          *://answers.onstartups.com/*
-// @match          *://meta.answers.onstartups.com/*
-// @match          *://mathoverflow.net/*
-// @match          *://area51.stackexchange.com/proposals/*
-// @grant        GM_xmlhttpRequest
+// @match          *://stackoverflow.com/users/*
+// @match          *://serverfault.com/users/*
+// @match          *://superuser.com/users/*
+// @match          *://meta.stackoverflow.com/users/*
+// @match          *://meta.serverfault.com/users/*
+// @match          *://meta.superuser.com/users/*
+// @match          *://stackapps.com/users/*
+// @match          *://*.stackexchange.com/users/*
+// @match          *://askubuntu.com/users/*
+// @match          *://meta.askubuntu.com/users/*
+// @match          *://answers.onstartups.com/users/*
+// @match          *://meta.answers.onstartups.com/users/*
+// @match          *://mathoverflow.net/users/*
+// @match          *://area51.stackexchange.com/proposals/users/*
 // @grant        unsafeWindow
 // ==/UserScript==
 /* jshint -W097 */
@@ -30,16 +29,20 @@ const findBanElement = () => document.querySelector('.user-panel-mod-info tr:nth
 const isUserReviewBanned = () => !!findBanElement().querySelector('a');
 
 const generateLink = (text, onclick) => {
+    let span = document.createElement('span');
     let a = document.createElement('a');
     a.textContent = text;
     a.href = '#';
     a.addEventListener('click', e => {
-        console.log('Clicked!', e);
         e.preventDefault();
         onclick(e);
     });
 
-    return a;
+    span.appendChild(document.createTextNode('('));
+    span.appendChild(a);
+    span.appendChild(document.createTextNode(')'));
+
+    return span;
 };
 const generateBanLink = () => generateLink('ban', e => {
     let reason = prompt('Reason (supports markdown)');
